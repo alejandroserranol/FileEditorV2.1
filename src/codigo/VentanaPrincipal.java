@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -19,7 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author aleja
+ * @author Alejandro Serrano Loredo
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
     
@@ -190,6 +191,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new VentanaPrincipal().setVisible(true);
+                
+                ImageIcon imgicon = new ImageIcon("/imagenes/carpeta.png");
+                
+                
             }
         });
     }
@@ -330,3 +335,5 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }
 }
+
+/* Iconos diseñados por <a href="https://www.flaticon.es/autores/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.es/" title="Flaticon"> www.flaticon.es</a> */
