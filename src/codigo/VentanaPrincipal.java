@@ -50,6 +50,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         bnNuevo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/imagenes/carpeta.png")).getImage()
+
+        );
 
         txtHojaEscritura.setColumns(20);
         txtHojaEscritura.setRows(5);
