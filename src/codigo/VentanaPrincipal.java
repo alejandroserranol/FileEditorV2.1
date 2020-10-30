@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -21,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  *
  * @author Alejandro Serrano Loredo
+ * @version 2.1
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
     
@@ -194,10 +194,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new VentanaPrincipal().setVisible(true);
-                
-                ImageIcon imgicon = new ImageIcon("/imagenes/carpeta.png");
-                
-                
             }
         });
     }
@@ -212,6 +208,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     //Métodos de lectura
+    /**
+     * 
+     * @return Ruta absoluta del fichero que se desea abrir.  
+     */
     private String dialogoSeleccionarFichero() {
         
         try {
@@ -246,6 +246,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         return "";
     }
 
+    /**
+     * 
+     * @param nombre: Ruta absoluta del fichero que se desea leer  
+     */
     private void leerBufferReader(String nombre) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(nombre));
@@ -265,6 +269,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     //Métodos de escritura
+    /**
+     * @see Permite seleccionar la ruta donde guardar el fichero
+     */
     private void dialogoGuardarFichero() {
         JFileChooser fcs = new JFileChooser();
         
