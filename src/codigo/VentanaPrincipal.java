@@ -346,4 +346,39 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 }
 
+/*
+
+public static void isBinary(File file) throws IOException {
+	File testFile = new File ("32.txt");
+	FileReader reader = new FileReader (testFile);
+	String type = null;
+	int data = reader.read();
+	char [] c = new char [3];
+
+	for (int i=0;i<3;i++) {
+		c[i] =(char)data;
+		data=reader.read();
+	}
+	reader.close();
+	System.out.println();
+	type = Character.toString(c[0]);
+	for (int i = 1;i<2;i++)
+		type = type + Character.toString(c[i]);
+	
+
+	if (type.equals("þÿ")) {
+		System.out.println("file is UTF-32 text file");
+	} else if (type.equals("ÿþ")) {
+			System.out.println("file is UTF-16 text file");
+	} else if (type.equals("ï»")) {
+		System.out.println("file is UTF-8 text file"  );
+	} else if (!type.matches("[_a-zA-Z0-9\\-\\.]*")) { 		//Remove illegial characters.
+		System.out.println("file appears to be a binary file");
+	} else {
+		System.out.println("file appears to be ansi text file");
+	}
+}
+
+*/
+
 /* Iconos diseñados por <a href="https://www.flaticon.es/autores/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.es/" title="Flaticon"> www.flaticon.es</a> */
