@@ -48,6 +48,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
         btnGuardarComo = new javax.swing.JButton();
         bnNuevo = new javax.swing.JButton();
+        txtFichero = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/imagenes/carpeta.png")).getImage()
@@ -86,6 +87,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        txtFichero.setText(" ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,7 +105,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(btnGuardarComo)
                         .addGap(18, 18, 18)
                         .addComponent(bnNuevo)
-                        .addGap(0, 246, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtFichero, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -113,7 +117,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     .addComponent(btnAbrir)
                     .addComponent(btnGuardar)
                     .addComponent(btnGuardarComo)
-                    .addComponent(bnNuevo))
+                    .addComponent(bnNuevo)
+                    .addComponent(txtFichero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
                 .addContainerGap())
@@ -131,7 +136,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         
         if(fichero != null){
-            guardar(fichero.getAbsolutePath());
+            guardar(fichero);
         } else {
             dialogoGuardarFichero();
         }
@@ -155,11 +160,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         if (save == 0) {
             fichero = null;
+            //Borra la hoja de escritura
             txtHojaEscritura.setText("");
         } else {
             dialogoGuardarFichero();
         }
         
+        //Borra la etiqueta con el nombre del fichero
+        txtFichero.setText("");
         
     }//GEN-LAST:event_bnNuevoActionPerformed
 
@@ -204,15 +212,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnGuardarComo;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel txtFichero;
     private javax.swing.JTextArea txtHojaEscritura;
     // End of variables declaration//GEN-END:variables
 
-    //Métodos de lectura
+        //Métodos de lectura ---------------------------------------------------    
     /**
-     * 
-     * @return Ruta absoluta del fichero que se desea abrir.  
+     * @see Abre el fichero seleccionado.
+     * @return Fichero seleccionado.
      */
-    private String dialogoSeleccionarFichero() {
+    private File dialogoSeleccionarFichero() {
         
         try {
             JFileChooser fco = new JFileChooser();
@@ -236,49 +245,61 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     JOptionPane.showConfirmDialog(null, "Estensión seleccionada no válida.", "", JOptionPane.PLAIN_MESSAGE);
                 
                 } else {
-                     return fichero.getAbsolutePath();
+                     return fichero;
                 }
             }
         } catch (Exception ex) {
             System.out.println("Fichero no seleccionado.");
         }
 
-        return "";
+        return null;
     }
 
     /**
-     * 
-     * @param nombre: Ruta absoluta del fichero que se desea leer  
+     * @see Muestra el contenido del fichero en el TextArea.
+     * @param fichero: Fichero abierto en el método "dialogoSeleccionarFichero()"  
      */
-    private void leerBufferReader(String nombre) {
+    private void leerBufferReader(File fichero) {
+        
         try {
-            BufferedReader br = new BufferedReader(new FileReader(nombre));
+            BufferedReader br = new BufferedReader(new FileReader(fichero.getAbsolutePath()));
 
             String valor = br.readLine();
             while (valor != null) {
                 //append no incluye los saltos de línea
-                txtHojaEscritura.append(valor + "\r\n");
+                txtHojaEscritura.append(valor + "\n");
                 valor = br.readLine();
             }
 
             br.close();
+            
+            //Borra la etiqueta con el nombre del fichero
+            txtFichero.setText(fichero.getName());
 
         } catch (Exception ex) {
             System.out.println("Error al mostrar el fichero.");
         }
     }
 
-    //Métodos de escritura
+// ----------------------------------------------------------------------------- 
+    
+        //Métodos de escritura
     /**
-     * @see Permite seleccionar la ruta donde guardar el fichero
+     * @see Permite seleccionar la ruta donde guardar el fichero y
+     *      pasa el fichero como parámetro a los métodos de guardado.
      */
     private void dialogoGuardarFichero() {
         JFileChooser fcs = new JFileChooser();
+        
+        //Busca evitar abrir ficheros binarios
+        fcs.setFileFilter(new FileNameExtensionFilter("Archivos de texto txt", "txt"));
+        fcs.setFileFilter(new FileNameExtensionFilter("Archivos xml", "xml"));
         
         int seleccion = fcs.showSaveDialog(this);
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             //si entra aquí es porque el usuario ha pulsado en "guardar"
             fichero = fcs.getSelectedFile();
+            //busco la extensión para filtrar los ficheros
             String nombre = fichero.getName();
             String extension = nombre.substring(nombre.lastIndexOf('.') + 1, nombre.length());
 
@@ -289,35 +310,44 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             } else {
 
                 if (!fichero.exists()) {
-                    guardar(fichero.getAbsolutePath());
+                    guardar(fichero);
                 } else {
-                    guardarComo(nombre, fichero.getAbsolutePath());
+                    guardarComo(fichero);
                 }
             }
         }
     }
 
-    private void guardar(String rutaAbsoluta) {
+    /**
+     * @see Guarda el fichero.
+     * @param fichero: Fichero seleccionado para guardar en "dialogoGuardarFichero()"  
+     */
+    private void guardar(File fichero) {
         try {
 
-            BufferedWriter bw = new BufferedWriter(new FileWriter(rutaAbsoluta));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fichero.getAbsolutePath()));
 
-            for (String linea : txtHojaEscritura.getText().split("\\n")) {
-                bw.write(linea);
-            }
+            bw.write(txtHojaEscritura.getText());
+            bw.flush(); //improves the I/O performance
 
             bw.close();
+            
+            //Borra la etiqueta con el nombre del fichero
+            txtFichero.setText(fichero.getName());
 
-        } catch (IOException ex) {
-            System.out.println("Error en la escritura del fichero.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-
-    private void guardarComo(String nombre, String rutaAbsoluta) {
+    /**
+     * @see Permite guardar un fichero existente con opcción de sobrescribir o añadir.
+     * @param fichero: Fichero seleccionado para guardar en "dialogoGuardarFichero()"  
+     */
+    private void guardarComo(File fichero) {
         Frame frame = new Frame();
 
         JCheckBox checkbox = new JCheckBox("Añadir contenido al final del fichero.");
-        String mensaje = nombre + " ya existe. \n ¿desea reemplazarlo?";
+        String mensaje = fichero.getName() + " ya existe. \n ¿desea reemplazarlo?";
 
         Object[] opcionesGuardado = {mensaje, checkbox};
         int save = JOptionPane.showConfirmDialog(frame, opcionesGuardado, "Disconnect Products", JOptionPane.YES_NO_OPTION);
@@ -325,60 +355,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         if (save == 0) {
             if (addChoice == false) {
-                guardar(rutaAbsoluta);
+                guardar(fichero);
                 
             } else {
                 try {
 
-                    BufferedWriter bw = new BufferedWriter(new FileWriter(rutaAbsoluta, true));
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(fichero, true));
 
-                    for (String linea : txtHojaEscritura.getText().split("\\n")) {
-                        bw.write(linea);
-                    }
+                    bw.write(txtHojaEscritura.getText());
+                    bw.flush(); //improves the I/O performance
 
                     bw.close();
+                    
+                    //Borra la etiqueta con el nombre del fichero
+                    txtFichero.setText(fichero.getName());
 
-                } catch (IOException ex) {
-                    System.out.println("Error en la escritura del fichero.");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
 }
-
-/*
-
-public static void isBinary(File file) throws IOException {
-	File testFile = new File ("32.txt");
-	FileReader reader = new FileReader (testFile);
-	String type = null;
-	int data = reader.read();
-	char [] c = new char [3];
-
-	for (int i=0;i<3;i++) {
-		c[i] =(char)data;
-		data=reader.read();
-	}
-	reader.close();
-	System.out.println();
-	type = Character.toString(c[0]);
-	for (int i = 1;i<2;i++)
-		type = type + Character.toString(c[i]);
-	
-
-	if (type.equals("þÿ")) {
-		System.out.println("file is UTF-32 text file");
-	} else if (type.equals("ÿþ")) {
-			System.out.println("file is UTF-16 text file");
-	} else if (type.equals("ï»")) {
-		System.out.println("file is UTF-8 text file"  );
-	} else if (!type.matches("[_a-zA-Z0-9\\-\\.]*")) { 		//Remove illegial characters.
-		System.out.println("file appears to be a binary file");
-	} else {
-		System.out.println("file appears to be ansi text file");
-	}
-}
-
-*/
 
 /* Iconos diseñados por <a href="https://www.flaticon.es/autores/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.es/" title="Flaticon"> www.flaticon.es</a> */
